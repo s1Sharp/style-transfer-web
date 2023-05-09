@@ -1,0 +1,39 @@
+version: "3.7"
+services:
+  app:
+    image: s1sharp/style_web_app:latest
+    build:
+      context: .
+    working_dir: /home
+    env_file:
+      - config/.env_local
+    container_name: fastapi_app
+    command: ["docker/app.sh"]
+    ports:
+      - 9999:8080
+
+
+  celery:
+    image: s1sharp/style_web_app:latest
+    build:
+      context: .
+    working_dir: /home
+    env_file:
+      - config/.env_local
+    container_name: celery_app
+    command: ["docker/celery.sh", "celery"]
+
+
+  flower:
+    image: s1sharp/style_web_app:latest
+    build:
+      context: .
+    working_dir: /home
+    env_file:
+      - config/.env_local
+    container_name: flower_app
+    command: ["docker/celery.sh", "flower"]
+    depends_on:
+      - celery
+    ports:
+      - 8888:5555

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script>
+    const searchForTask = () => {
+        const searchInputValueTask = document.getElementById("task_search").value;
+        const searchInputValueApiKey = document.getElementById("api_key_search").value;
+        window.location.href = `/pages/task/${searchInputValueTask}?api_key=${searchInputValueApiKey}`;
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="flex justify-center flex-col items-center">
+    <div class="flex my-3 gap-5">
+        <input id="task_search" type="text" placeholder="task id" class="text-xl">
+        <input id="api_key_search" type="text" placeholder="api key" class="text-xl">
+        <button onclick="searchForTask()" class="border-2 rounded-3xl bg-gray-300 p-3">Поиск по task</button>
+    </div>
+    <span>Insert your task identification number and secret api key</span>
+    {% if tasks is not none %}
+        {% for task in tasks %}
+        <div class="flex rounded-3 border-2 p-3 mt-5">
+            <img width="150" src="{{ task[1] }}" alt="Task" class="mr-5">
+            <div class="flex flex-col">
+                <span class="text-2xl font-bold">{{ task[0] }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="flex rounded-3 border-2 p-3 mt-5">
+            <div class="flex flex-col">
+                <span class="text-2xl font-bold">"Task not found"</span>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

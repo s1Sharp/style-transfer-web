@@ -1,0 +1,8 @@
+env/
+.vscode
+ts.conf
+__pycache__
+web2/
+train-src/
+.pytest_cache
+docker-compose-db.yml
