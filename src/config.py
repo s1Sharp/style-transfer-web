@@ -25,7 +25,7 @@ PROJECT_ROOT = os.environ.get("PROJECT_ROOT")
 if PROJECT_ROOT is None:
     raise FileNotFoundError("PROJECT_ROOT")
 
-path=f'{PROJECT_ROOT}/config/.env_local'
+path=f'{PROJECT_ROOT}/config/.env_release'
 
 env_control = WebEnvControl(path)
 

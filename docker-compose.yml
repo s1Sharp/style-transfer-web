@@ -6,7 +6,7 @@ services:
       context: .
     working_dir: /home
     env_file:
-      - config/.env_local
+      - config/.env_release
     container_name: fastapi_app
     command: ["docker/app.sh"]
     ports:
@@ -19,7 +19,7 @@ services:
       context: .
     working_dir: /home
     env_file:
-      - config/.env_local
+      - config/.env_release
     container_name: celery_app
     command: ["docker/celery.sh", "celery"]
 
@@ -30,7 +30,7 @@ services:
       context: .
     working_dir: /home
     env_file:
-      - config/.env_local
+      - config/.env_release
     container_name: flower_app
     command: ["docker/celery.sh", "flower"]
     depends_on:
