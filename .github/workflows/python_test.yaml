@@ -1,0 +1,79 @@
+name: Python test
+
+
+on:
+  push:
+    paths:
+      - "**"
+      - "!.github/**"
+      - "!.gitignore"
+      - "!README.md"
+      - ".github/workflows/python_lint.yaml"
+
+  pull_request:
+    paths:
+      - "**"
+      - "!.github/**"
+      - "!.gitignore"
+      - "!README.md"
+      - ".github/workflows/python_lint.yaml"
+
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.10"]
+    env:
+      PROJECT_ROOT: "."
+      PY_EXE: "python3"
+
+    defaults:
+      run:
+        working-directory: ${{ env.PROJECT_ROOT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Update gitmodules with pull
+        run: |
+              git pull --recurse-submodules
+              git submodule update --remote --recursive
+
+      - name: Set scripts executable
+        run: |
+              chmod a+x -R scripts/
+
+      - name: Decrypt large secret
+        run: scripts/decrypt_secret.sh -s config/.env_release.gpg -d config/.env_release -k ${{ secrets.ENV_SECRET_PASSPHRASE }}
+        # This command is just an example to show your secret being printed
+        # Ensure you remove any print statements of your secrets. GitHub does
+        # not hide secrets that use this workaround.
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # You can test your matrix by printing the current Python version
+      - name: Display Python version
+        run: |
+              ${{ env.PY_EXE }} -c "import sys; print(sys.version)"
+
+      - name: Update pip
+        run: |
+              ${{ env.PY_EXE }} -m pip install --upgrade pip
+
+      - name: Install dependencies, requirements.txt
+        run: |
+              ${{ env.PY_EXE }} -m pip install -r requirements.txt
+
+      - name: Test with pytest
+        run: |
+              pytest -s -v -x tests/
