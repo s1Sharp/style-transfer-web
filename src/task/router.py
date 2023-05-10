@@ -163,9 +163,7 @@ async def get_task_status(task_id: int, api_key: str, session: AsyncSession = De
         }
 
     return {
-            "status": 200,
-            "data": {"task_status": task.status, "task_link": task.download_link},
-            "details": None
-        }
-git config --global user.email "maksim.carkov.201300@gmail.com"
-git config --global user.name "Tsarkov Maksim"
+        "status": 200,
+        "data": {"task_status": task.status, "task_link": task.download_link},
+        "details": None
+    }
