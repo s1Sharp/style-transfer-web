@@ -147,19 +147,25 @@ async def add_specific_task(
 @router.get("/task_status")
 async def get_task_status(task_id: int, api_key: str, session: AsyncSession = Depends(get_async_session)): # task=Depends(get_task_manager)):
     task = await session.get(Task, task_id)
-    user = await session.get(User, task.user_id)
-    if user.api_key != api_key:
-        task = None
-
-    if task is not None:
-        return {
-            "status": 200,
-            "data": {"task_status": task.status, "task_link": task.download_link},
-            "details": None
-        }
-    else:
+    if task is None:
         return {
             "status": 404,
             "data": None,
             "details": "Task not found"  
-    }
+        }
+
+    user = await session.get(User, task.user_id)
+    if user.api_key != api_key:
+        return {
+            "status": 404,
+            "data": None,
+            "details": "Incorrect api_key"  
+        }
+
+    return {
+            "status": 200,
+            "data": {"task_status": task.status, "task_link": task.download_link},
+            "details": None
+        }
+git config --global user.email "maksim.carkov.201300@gmail.com"
+git config --global user.name "Tsarkov Maksim"
