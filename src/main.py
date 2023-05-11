@@ -10,6 +10,7 @@ from auth.schemas import UserCreate, UserRead
 from auth.router import router as router_user
 from task.router import router as router_tasks
 from pages.router import router as router_pages
+from healthz.router import router as router_healthz
 
 from redis import asyncio as aioredis
 from config import REDIS_URL, DOMEN_URL
@@ -34,6 +35,7 @@ app.include_router(
 app.include_router(router_tasks)
 app.include_router(router_pages)
 app.include_router(router_user)
+app.include_router(router_healthz)
 
 
 origins = [
