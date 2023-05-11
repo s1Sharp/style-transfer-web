@@ -26,4 +26,5 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     bzip2 \
-    wget
+    wget \
+    gpg

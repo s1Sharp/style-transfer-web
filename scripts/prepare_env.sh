@@ -1,3 +1,6 @@
+export PROJECT_ROOT=$PWD
+echo $PROJECT_ROOT
+# echo "PROJECT_ROOT=$PWD" >> /etc/environment
 git submodule update --init --recursive
 git pull --recurse-submodules
 git submodule update --remote --recursive

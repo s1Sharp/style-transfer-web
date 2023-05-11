@@ -1,12 +1,12 @@
 import io
-from typing import List, Optional, Final
+from typing import List, Optional
 
 import boto3
 from botocore.exceptions import ClientError
 
 
 class S3StorageProxy():
-    const_presigned_link_expatration_seconds: Final[int] = 60 * 60 * 24
+    const_presigned_link_expatration_seconds: int = 60 * 60 * 24
 
     @property
     def expatration_seconds(self):

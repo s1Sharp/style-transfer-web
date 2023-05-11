@@ -64,10 +64,12 @@ async def validate_file_size(file: UploadFile, max_file_size: int = 1024 * 1024 
 
     try:
         async with aiofiles.open("/tmp/fastapi_app_tmpfileanme", "wb") as out_file:
-            while content := await file.read(1024):  # async read chunk
+            content = await file.read(1024) # async read chunk
+            while content:
                 real_file_size += len(content)
                 if real_file_size > max_file_size:
                     return False
+                content = await file.read(1024)
                 # await out_file.write(content)  # async write chunk
         msg = f"Successfuly uploaded {file.filename} for processing"
         print(msg)
