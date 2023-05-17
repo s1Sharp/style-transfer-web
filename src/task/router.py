@@ -1,4 +1,6 @@
 import time
+import hashlib
+
 from datetime import datetime
 from typing import Optional
 
@@ -154,11 +156,11 @@ def custom_task_cache(
     *args,
     **kwargs,
 ):
-    print(request)
     prefix = FastAPICache.get_prefix()
     route_args = kwargs['kwargs']
     param_key = f"{route_args['task_id']}:{route_args['api_key']}"
-    cache_key = f"{prefix}:{namespace}:{func.__module__}:{func.__name__}:{param_key}"
+    hashed_param_key = hashlib.sha1(param_key.encode('utf-8')).hexdigest()
+    cache_key = f"{prefix}:{namespace}:{func.__module__}:{func.__name__}:{hashed_param_key}"
     return cache_key
 
 
@@ -180,7 +182,7 @@ async def get_task_status(task_id: int, api_key: str, session: AsyncSession = De
             detail="Incorrect api_key",
         )
 
-    return JSONResponse(\
+    return JSONResponse(
         status_code=200, 
         content={
             "data": {"task_status": task.status.value, "task_link": task.download_link},
