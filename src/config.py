@@ -19,6 +19,7 @@ class WebEnvControl():
         self.S3_SECRET_ACCESS_KEY = os.environ.get("S3_SECRET_ACCESS_KEY", "")
         self.REDIS_URL = os.environ.get("REDIS_URL", "")
         self.DOMEN_URL = os.environ.get("DOMEN_URL", "")
+        self.RABBIT_MQ_URL = os.environ.get("RABBIT_MQ_URL", self.REDIS_URL)
 
 
 PROJECT_ROOT = os.environ.get("PROJECT_ROOT")
@@ -34,3 +35,4 @@ POSTGRE_URL = env_control.POSTGRE_URL
 POSTGRE_URL_TEST = env_control.POSTGRE_URL_TEST
 REDIS_URL = env_control.REDIS_URL
 DOMEN_URL = env_control.DOMEN_URL
+RABBIT_MQ_URL = env_control.RABBIT_MQ_URL

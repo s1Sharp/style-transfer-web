@@ -2,8 +2,11 @@ import time
 from datetime import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks, File, Request, Response, UploadFile, Form
+from fastapi.responses import JSONResponse
+from fastapi_cache import FastAPICache
 from fastapi_cache.decorator import cache
+from fastapi_cache.coder import JsonCoder 
 from starlette import status
 
 from sqlalchemy import insert, select
@@ -143,27 +146,44 @@ async def add_specific_task(
         "details": None
     }
 
+def custom_task_cache(
+    func,
+    namespace: Optional[str] = "",
+    request: Request = None,
+    response: Response = None,
+    *args,
+    **kwargs,
+):
+    print(request)
+    prefix = FastAPICache.get_prefix()
+    route_args = kwargs['kwargs']
+    param_key = f"{route_args['task_id']}:{route_args['api_key']}"
+    cache_key = f"{prefix}:{namespace}:{func.__module__}:{func.__name__}:{param_key}"
+    return cache_key
+
 
 @router.get("/task_status")
+@cache(expire=60 * 60 * 24, coder=JsonCoder, key_builder=custom_task_cache) # lambda *arg,**kwargs: kwargs['response'].body
 async def get_task_status(task_id: int, api_key: str, session: AsyncSession = Depends(get_async_session)): # task=Depends(get_task_manager)):
+    print("task_working")
     task = await session.get(Task, task_id)
     if task is None:
-        return {
-            "status": 404,
-            "data": None,
-            "details": "Task not found"  
-        }
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Task not found",
+        )
 
     user = await session.get(User, task.user_id)
     if user.api_key != api_key:
-        return {
-            "status": 404,
-            "data": None,
-            "details": "Incorrect api_key"  
-        }
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Incorrect api_key",
+        )
 
-    return {
-        "status": 200,
-        "data": {"task_status": task.status, "task_link": task.download_link},
-        "details": None
-    }
+    return JSONResponse(\
+        status_code=200, 
+        content={
+            "data": {"task_status": task.status.value, "task_link": task.download_link},
+            "details": None
+        }
+    )
