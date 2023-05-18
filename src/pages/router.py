@@ -26,6 +26,4 @@ def get_search_page(request: Request, response: Response):
 @cache(expire=60*60)
 @router.get("/task/{task_id}")
 def get_search_page(request: Request, response: Response, api_key:str, task=Depends(get_task_status)):
-    status_code = task.status_code
-    task=json.loads(task.body)
-    return templates.TemplateResponse("search.html", {"request": request, "tasks": [(task["data"]["task_status"], task["data"]["task_link"])] if status_code == 200 else None})
+    return templates.TemplateResponse("search.html", {"request": request, "tasks": [(task["data"]["task_status"], task["data"]["task_link"])] })

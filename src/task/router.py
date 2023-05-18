@@ -148,6 +148,7 @@ async def add_specific_task(
         "details": None
     }
 
+
 def custom_task_cache(
     func,
     namespace: Optional[str] = "",
@@ -167,7 +168,7 @@ def custom_task_cache(
 @router.get("/task_status")
 @cache(expire=60 * 60 * 24, coder=JsonCoder, key_builder=custom_task_cache) # lambda *arg,**kwargs: kwargs['response'].body
 async def get_task_status(task_id: int, api_key: str, session: AsyncSession = Depends(get_async_session)): # task=Depends(get_task_manager)):
-    print("task_working")
+
     task = await session.get(Task, task_id)
     if task is None:
         raise HTTPException(
@@ -183,7 +184,7 @@ async def get_task_status(task_id: int, api_key: str, session: AsyncSession = De
         )
 
     return JSONResponse(
-        status_code=200, 
+        status_code=200,
         content={
             "data": {"task_status": task.status.value, "task_link": task.download_link},
             "details": None
