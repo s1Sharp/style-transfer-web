@@ -5,14 +5,15 @@ from task.style_config import net
 
 from sqlalchemy import select
 from database import s3storage, async_session_maker
-from config import RABBIT_MQ_URL 
+from config import RABBIT_MQ_URL, REDIS_URL
 
 from celery import Celery
 import asyncio
 
 s3_proxy = s3storage.s3_proxy
 
-celery = Celery('tasks', broker=RABBIT_MQ_URL)
+broker_url = REDIS_URL if not RABBIT_MQ_URL else RABBIT_MQ_URL
+celery = Celery('tasks', broker=broker_url)
 
 
 async def make_convert_image_impl(task_id: int):
